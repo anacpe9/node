@@ -1,0 +1,12 @@
+FROM %%REGISTRY_IMAGE%%:%%IMAGE_VERSION%%
+LABEL maintainer="Anucha Nualsi <ana.cpe9@gmail.com>"
+
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0 \
+  NODE_ENV=development
+
+WORKDIR /app
+RUN apk update --no-cache \
+  && apk add --no-cache --update --virtual .build-deps make gcc g++ python3 \
+  && rm -rf /tmp/* \
+  && rm -rf /var/tmp/* \
+  && rm -rf /var/cache/apk/*

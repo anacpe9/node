@@ -1,0 +1,40 @@
+image: alpine:3.11
+
+variables:
+  DOCKER_DRIVER: overlay2
+  # DOCKER_HOST: tcp://localhost:2375
+
+stages:
+  - DockerRelease
+
+Docker:Build and Release:
+  stage: DockerRelease
+  image: docker:latest
+  only:
+    - tags
+  except:
+    - branches
+  services:
+    - docker:dind
+  cache: {}
+  variables:
+    IMAGE_NAME: "node"
+    AKS_CLUSTER: "rh-cluster"
+    RESOURCE_GROUP: "rh-k8s-group"
+  script:
+    - docker info
+    - IMAGE_VERSION=$CI_BUILD_REF_NAME REGISTRY_IMAGE=$CI_REGISTRY_IMAGE ./_gen-dockerfile.sh
+    - echo "$CI_BUILD_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - >-
+      docker build \
+      -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME \
+      -f dist/Dockerfile \
+      .
+    - >-
+      docker build \
+      -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-builder \
+      -f dist/Dockerfile.builder \
+      .
+    - docker images
+    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-builder
