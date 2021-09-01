@@ -26,14 +26,14 @@ Docker:Build and Release:
     - IMAGE_VERSION=$CI_BUILD_REF_NAME REGISTRY_IMAGE=$CI_REGISTRY_IMAGE ./_gen-dockerfile.sh
     - echo "$CI_BUILD_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - >-
-      docker build \
-      -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME \
-      -f dist/Dockerfile \
+      docker build
+      -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+      -f dist/Dockerfile
       .
     - >-
-      docker build \
-      -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-builder \
-      -f dist/Dockerfile.builder \
+      docker build
+      -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-builder
+      -f dist/Dockerfile.builder
       .
     - docker images
     - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
