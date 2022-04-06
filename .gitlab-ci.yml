@@ -19,8 +19,6 @@ stages:
   before_script:
     - docker info
     - REGISTRY_IMAGE=$CI_REGISTRY_IMAGE IMAGE_VERSION=$(git tag --points-at `git rev-list --tags --max-count=1` | grep -E "[0-9]+\.[0-9]+\.[0-9]+") ./_gen-dockerfile.sh
-    - echo "REGISTRY_IMAGE = $REGISTRY_IMAGE"
-    - echo "IMAGE_VERSION = $IMAGE_VERSION"
     - echo "$CI_BUILD_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - >-
       docker build
