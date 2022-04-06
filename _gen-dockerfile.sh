@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo $REGISTRY_IMAGE:IMAGE_VERSION
+echo $REGISTRY_IMAGE:$IMAGE_VERSION
 
 sed "s/%%IMAGE_VERSION%%/$IMAGE_VERSION/g" Dockerfile.template > dist/Dockerfile
 sed "s/%%REGISTRY_IMAGE%%:%%IMAGE_VERSION%%/${REGISTRY_IMAGE//\//\\/}:$IMAGE_VERSION/g" Dockerfile.builder.template > dist/Dockerfile.builder
