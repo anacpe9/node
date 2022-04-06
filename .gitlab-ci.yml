@@ -8,7 +8,7 @@ stages:
   - DockerRelease
 
 .docker-cli: &docker-cli
-  image: docker:latest
+  image: docker:git
   services:
     - docker:dind
   cache: {}
