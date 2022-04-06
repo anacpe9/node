@@ -1,4 +1,4 @@
-image: alpine:3.11
+image: alpine:3.15
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -7,13 +7,8 @@ variables:
 stages:
   - DockerRelease
 
-Docker:Build and Release:
-  stage: DockerRelease
+.docker-cli: &docker-cli
   image: docker:latest
-  only:
-    - tags
-  except:
-    - branches
   services:
     - docker:dind
   cache: {}
@@ -21,20 +16,36 @@ Docker:Build and Release:
     IMAGE_NAME: "node"
     AKS_CLUSTER: "rh-cluster"
     RESOURCE_GROUP: "rh-k8s-group"
-  script:
+  before_script:
     - docker info
-    - IMAGE_VERSION=$CI_BUILD_REF_NAME REGISTRY_IMAGE=$CI_REGISTRY_IMAGE ./_gen-dockerfile.sh
+    - REGISTRY_IMAGE=$CI_REGISTRY_IMAGE IMAGE_VERSION=$(git tag --points-at `git rev-list --tags --max-count=1` | grep -E "[0-9]+\.[0-9]+\.[0-9]+") ./_gen-dockerfile.sh
+    - echo "REGISTRY_IMAGE = $REGISTRY_IMAGE"
+    - echo "IMAGE_VERSION = $IMAGE_VERSION"
     - echo "$CI_BUILD_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - >-
       docker build
-      -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+      $(git tag --points-at `git rev-list --tags --max-count=1` | awk ' { print " -t " ENVIRON["CI_REGISTRY_IMAGE"] ":" $0} ')
       -f dist/Dockerfile
       .
     - >-
       docker build
-      -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-builder
+      $(git tag --points-at `git rev-list --tags --max-count=1` | awk ' { print " -t " ENVIRON["CI_REGISTRY_IMAGE"] ":" $0 "-builder"} ')
       -f dist/Dockerfile.builder
       .
+
+Docker:Build:
+  <<: *docker-cli
+  stage: DockerRelease
+  only:
+    - main
+  script:
     - docker images
-    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
-    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-builder
+
+Docker:Build and Release:
+  <<: *docker-cli
+  stage: DockerRelease
+  only:
+    - release
+  script:
+    - docker images
+    - docker push $CI_REGISTRY_IMAGE --all-tags
