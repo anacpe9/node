@@ -1,4 +1,4 @@
-FROM node:16.14.0-alpine
+FROM node:16.15.0-alpine
 LABEL maintainer="Anucha Nualsi <ana.cpe9@gmail.com>"
 
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0 \
@@ -8,7 +8,8 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED=0 \
   LANG=th_TH.utf8 \
   LANGUAGE=th_TH.utf8 \
   LC_CTYPE=th_US.utf8 \
-  LC_ALL=th_TH.utf8
+  LC_ALL=th_TH.utf8 \
+  TZ=Asia/Bangkok
 
 RUN apk update --no-cache \
   && apk add --no-cache --update tzdata \

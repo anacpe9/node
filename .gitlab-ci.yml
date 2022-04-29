@@ -14,8 +14,8 @@ stages:
   cache: {}
   variables:
     IMAGE_NAME: "node"
-    AKS_CLUSTER: "rh-cluster"
-    RESOURCE_GROUP: "rh-k8s-group"
+    AKS_CLUSTER: ""
+    RESOURCE_GROUP: ""
   before_script:
     - docker info
     - REGISTRY_IMAGE=$CI_REGISTRY_IMAGE IMAGE_VERSION=$(git tag --points-at `git rev-list --tags --max-count=1` | grep -E "[0-9]+\.[0-9]+\.[0-9]+") ./_gen-dockerfile.sh
