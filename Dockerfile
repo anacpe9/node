@@ -16,8 +16,8 @@ RUN apk update --no-cache \
   && cp /usr/share/zoneinfo/Asia/Bangkok /etc/localtime \
   && echo "Asia/Bangkok" >  /etc/timezone \
   && apk del tzdata \
-  && npm install -g npm@8.5.0 \
-  && npm install -g yarn@1.22.17 --force \
+  && npm install -g npm@8.10.0 \
+  && npm install -g yarn@1.22.18 --force \
   && npm cache clean --force \
   && mkdir -p /usr/src/app \
   && mkdir -p /app \
