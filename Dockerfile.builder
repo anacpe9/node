@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/xzteam/image/node:18.0.0-alpine
+FROM registry.gitlab.com/xzteam/image/node:18.2.0-alpine
 LABEL maintainer="Anucha Nualsi <ana.cpe9@gmail.com>"
 
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0 \
