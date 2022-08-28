@@ -1,4 +1,4 @@
-FROM node:16.16.0-alpine
+FROM node:16.17.0-alpine
 LABEL maintainer="Anucha Nualsi <ana.cpe9@gmail.com>"
 
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0 \
@@ -16,7 +16,7 @@ RUN apk update --no-cache \
   && cp /usr/share/zoneinfo/Asia/Bangkok /etc/localtime \
   && echo "Asia/Bangkok" >  /etc/timezone \
   && apk del tzdata \
-  && npm install -g npm@8.14.0 \
+  && npm install -g npm@8.18.0 \
   && npm install -g yarn@1.22.19 --force \
   && npm cache clean --force \
   && mkdir -p /usr/src/app \
