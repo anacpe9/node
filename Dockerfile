@@ -8,8 +8,7 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED=0 \
   LANG=th_TH.utf8 \
   LANGUAGE=th_TH.utf8 \
   LC_CTYPE=th_US.utf8 \
-  LC_ALL=th_TH.utf8 \
-  TZ=Asia/Bangkok
+  LC_ALL=th_TH.utf8
 
 RUN apk update --no-cache \
   && apk add --no-cache --update tzdata \
