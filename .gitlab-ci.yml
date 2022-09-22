@@ -19,7 +19,9 @@ stages:
   before_script:
     - docker info
     - git fetch --tags -f
-    - docker images | grep $CI_REGISTRY_IMAGE | awk '{print $1 ":" $2}' | xargs -n 1 docker rmi
+    - >-
+      [[ $(docker images | grep $CI_REGISTRY_IMAGE | wc -l | xargs) -ne '0' ]]
+      && docker images | grep $CI_REGISTRY_IMAGE | awk '{print $1 ":" $2}' | xargs -n 1 docker rmi
     - git describe --tags --abbrev=0
     - git tag --points-at `git describe --tags --abbrev=0`
     - REGISTRY_IMAGE=$CI_REGISTRY_IMAGE IMAGE_VERSION=$(git tag --points-at `git describe --tags --abbrev=0` | grep -E "[0-9]+\.[0-9]+\.[0-9]+") ./_gen-dockerfile.sh
