@@ -18,17 +18,22 @@ stages:
     RESOURCE_GROUP: ""
   before_script:
     - docker info
-    - docker images | grep $CI_REGISTRY_IMAGE | awk '{print $1 ":" $2}' | xargs -n 1 docker rmi
-    - REGISTRY_IMAGE=$CI_REGISTRY_IMAGE IMAGE_VERSION=$(git tag --points-at `git rev-list --tags --max-count=1` | grep -E "[0-9]+\.[0-9]+\.[0-9]+") ./_gen-dockerfile.sh
+    - git fetch --tags -f
+    - >-
+      [[ $(docker images | grep $CI_REGISTRY_IMAGE | wc -l | xargs) -ne '0' ]]
+      && docker images | grep $CI_REGISTRY_IMAGE | awk '{print $1 ":" $2}' | xargs -n 1 docker rmi
+    - git describe --tags --abbrev=0
+    - git tag --points-at `git describe --tags --abbrev=0`
+    - REGISTRY_IMAGE=$CI_REGISTRY_IMAGE IMAGE_VERSION=$(git tag --points-at `git describe --tags --abbrev=0` | grep -E "[0-9]+\.[0-9]+\.[0-9]+") ./_gen-dockerfile.sh
     - echo "$CI_BUILD_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - >-
       docker build
-      $(git tag --points-at `git rev-list --tags --max-count=1` | awk ' { print " -t " ENVIRON["CI_REGISTRY_IMAGE"] ":" $0} ')
+      $(git tag --points-at `git describe --tags --abbrev=0` | awk ' { print " -t " ENVIRON["CI_REGISTRY_IMAGE"] ":" $0} ')
       -f dist/Dockerfile
       .
     - >-
       docker build
-      $(git tag --points-at `git rev-list --tags --max-count=1` | awk ' { print " -t " ENVIRON["CI_REGISTRY_IMAGE"] ":" $0 "-builder"} ')
+      $(git tag --points-at `git describe --tags --abbrev=0` | awk ' { print " -t " ENVIRON["CI_REGISTRY_IMAGE"] ":" $0 "-builder"} ')
       -f dist/Dockerfile.builder
       .
 

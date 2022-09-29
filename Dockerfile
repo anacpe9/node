@@ -1,4 +1,4 @@
-FROM node:18.9.0-alpine
+FROM node:18.10.0-alpine
 LABEL maintainer="Anucha Nualsi <ana.cpe9@gmail.com>"
 
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0 \
